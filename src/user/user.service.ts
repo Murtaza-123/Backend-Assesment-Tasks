@@ -1,22 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Post } from "../auth/schema/post.schema";
 import { Model, ObjectId } from "mongoose";
 import { Details } from "../auth/schema/user-details.schema";
+import { AdminService } from "../admin/admin.service";
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(Post.name) private postModel: Model<Post>,
-              @InjectModel(Post.name) private detailsModel: Model<Details>,
-              ) {}
-  async likePost(id: ObjectId, userId: string) {
-           await this.postModel.findById(id)
-    const add = new this.detailsModel({userId:userId , likes:1})
-    return add.save()
-   // await this.detailsModel.findByIdAndUpdate(id, { $addToSet: { userId:userId , likes:1  } });
+  constructor(
+    @InjectModel(Details.name) private detailsModel: Model<Details>,
+    @Inject(forwardRef(() => AdminService))
+    private adminService: AdminService
+  ) {
   }
 
-  // async unlikePost(id: string, userId: string): Promise<void> {
-  //   await this.postModel.findByIdAndUpdate(id, { $pull: { likes: userId } });
-  // }
+  async likePost(id: ObjectId, userId: string) {
+    const postId = await this.adminService.findId(id);
+    const post = new this.detailsModel({ likes: postId, userId: userId });
+    return post.save();
+  }
+
+  async unlikePost(id: ObjectId, userId: string) {
+    const unlike = await this.detailsModel.findOneAndDelete(id);
+    return unlike;
+  }
+
+  async checkLikedPost(userName: string) {
+    const user = await this.detailsModel.find({ userId: userName });
+    if (!user) {
+      console.log("user not found");
+    }
+    return this.detailsModel.find();
+  }
+
+  async countAllLikes(id: ObjectId) {
+    const count = await this.detailsModel.count(id);
+    return count;
+  }
+
 }

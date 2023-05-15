@@ -11,13 +11,6 @@ export class Post extends Document {
   @Prop()
   image: string;
 
-  @Prop()
-  text: string;
-
-  @Prop()
-  likes: number[];
-  type: UserType
-
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

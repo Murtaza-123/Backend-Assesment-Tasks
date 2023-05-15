@@ -1,11 +1,26 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Delete, Param, Patch } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  Delete,
+  Param,
+  Patch,
+  Get,
+  Body,
+  Inject, forwardRef
+} from "@nestjs/common";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminService } from "./admin.service";
 import { ObjectId, Query } from "mongoose";
+import { UserService } from "../user/user.service";
 
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly adminService: AdminService,
+              @Inject(forwardRef(() => UserService))
+              private userService: UserService
+              ) {}
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
@@ -25,4 +40,10 @@ export class AdminController {
     return this.adminService.updateImage(id , file)
   }
 
+
+@Get('countAllLikes')
+  async countAllLikes(@Body ('id') id:ObjectId)
+{
+  return await this.userService.countAllLikes(id)
+}
 }

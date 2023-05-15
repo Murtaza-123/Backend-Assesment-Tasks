@@ -1,6 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, ObjectId } from "mongoose";
-export type UserType = 'user';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose, { Document } from "mongoose";
 
 
 
@@ -9,15 +8,13 @@ export type UserType = 'user';
 })
 export class Details extends Document {
   @Prop()
-   userId: string;
+  postId: mongoose.Types.ObjectId;
 
   @Prop()
-  likes: number;
-  //type: UserType
+  userId:string;
 
-
-
-
+  @Prop()
+  likes:[]
 }
 
 export const DetailSchema = SchemaFactory.createForClass(Details);
