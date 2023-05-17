@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-export type UserType = 'user' | 'admin';
-
 
 @Schema({
     timestamps: true,
@@ -16,8 +14,8 @@ export class User extends Document {
     @Prop()
     password: string;
 
-    @Prop({ default: 'user' })
-    type: UserType;
+    @Prop()
+    type: string;
 
 
 }

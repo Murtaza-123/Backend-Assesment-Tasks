@@ -15,7 +15,7 @@ export class AuthService {
     ) {}
 
     async signUp(signUpDto: SignUpDto): Promise<{ token: string }> {
-        const { name, email, password } = signUpDto;
+        const { name, email, password , type } = signUpDto;
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -23,7 +23,7 @@ export class AuthService {
             name,
             email,
             password: hashedPassword,
-            type: 'user'
+            type
         });
 
         const token = this.jwtService.sign({ id: user._id });
@@ -46,8 +46,11 @@ export class AuthService {
             throw new UnauthorizedException('Invalid email or password');
         }
 
-        const token = this.jwtService.sign({ id: user._id });
+          const role = user.type
+        const token = this.jwtService.sign({ id: user._id , role});
 
         return { token };
     }
+
+
 }

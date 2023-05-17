@@ -8,14 +8,17 @@ import {
   Patch,
   Get,
   Body,
-  Inject, forwardRef
+  Inject, forwardRef, SetMetadata, UseGuards
 } from "@nestjs/common";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminService } from "./admin.service";
 import { ObjectId, Query } from "mongoose";
 import { UserService } from "../user/user.service";
+import { Roles } from "../common/guards/api-key/roles.decorator";
+import { UserGuard } from "../common/guards/api-key/user.guard";
 
 @Controller('admin')
+@UseGuards(UserGuard)
 export class AdminController {
   constructor(private readonly adminService: AdminService,
               @Inject(forwardRef(() => UserService))
@@ -23,6 +26,7 @@ export class AdminController {
               ) {}
 
   @Post('upload')
+  @Roles('admin')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     const orignalName = file.originalname

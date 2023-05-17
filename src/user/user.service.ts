@@ -15,7 +15,7 @@ export class UserService {
 
   async likePost(id: ObjectId, userId: string) {
     const postId = await this.adminService.findId(id);
-    const post = new this.detailsModel({ likes: postId, userId: userId });
+    const post = new this.detailsModel({ likes: postId._id, userId: userId });
     return post.save();
   }
 
@@ -36,5 +36,9 @@ export class UserService {
     const count = await this.detailsModel.count(id);
     return count;
   }
+  // async findId(id: ObjectId) {
+  //   const find = await this.detailsModel.findById(id).populate('postId').exec();
+  //   return find;
+  //}
 
 }
